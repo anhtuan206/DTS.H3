@@ -281,7 +281,7 @@ def main():
     #Move to configure mode
     if get_config(userName,hostName) == True:
         #Load configuration from file from computer
-        configFileTxt = hostNameOld + ".txt"
+        configFileTxt = hostNameOld + ".export.txt"
         fo = open(configFileTxt ,"r")
         lines = fo.readlines()
         crt.Screen.Send("load merge terminal" + "\n")

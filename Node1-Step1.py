@@ -189,7 +189,7 @@ def main():
     userName = ""
     result = crt.Dialog.MessageBox("Đã login vào thiết bị chưa?", "Logged-in?",  ICON_QUESTION | BUTTON_YESNO | DEFBUTTON2 )
     if result == IDNO:
-        crt.Dialog.MessageBox("Vậy thì cút!")
+        crt.Dialog.MessageBox("Đăng nhập bằng tài khoản dts trước khi chạy script!")
         crt.Screen.SendSpecial("MENU_SCRIPT_CANCEL")
     else:
         confirm = False
@@ -278,7 +278,7 @@ def main():
                 fo.write(configRead)
                 fo.close()
                 crt.Sleep(1000)
-                configFileTxt = hostName + ".txt"
+                configFileTxt = hostName + ".export.txt"
                 fo = open(configFile ,"r")
                 fotxt = open(configFileTxt ,"w+")
                 lines = fo.readlines()
