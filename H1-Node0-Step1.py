@@ -45,7 +45,7 @@ def mount_usb():
         #Test git commit
         crt.Screen.Send("ls /dev/da1s*" + "\n")
         dev = crt.Screen.ReadString(cliPrompt)
-        crt.Sleep(3000)
+        crt.Sleep(5000)
         for usb in range(1,10):
             devName = "da1s" + str(usb)
             if dev.find(devName)!=-1:
@@ -75,7 +75,7 @@ def reboot_system():
     crt.Screen.Send ("root" + "\n")
     crt.Screen.WaitForString("Password: ",60)
     crt.Screen.Send ("1234Aa@" + "\n")
-    cliPrompt = crt.Screen.WaitForString("root@:~ # ",60)
+    cliPrompt = crt.Screen.WaitForString("% ",60)
     if cliPrompt == False:
         return False
     else: return True	
@@ -86,28 +86,6 @@ def main():
     cliPrompt = "% "
     showPrompt = "root> "
     configPrompt = "root# "
-
-    #Get Cli prompt
-    currentCli = False
-    if check_login == True:
-        crt.Screen.Send("root" + "\n")
-        crt.Screen.WaitForString(cliPrompt,2)
-        currentCli = True
-    elif check_show() == True:
-        crt.Screen.Send("exit" + "\n")
-        crt.Screen.WaitForString(cliPrompt,2)
-        currentCli = True
-    elif check_conf() == True:
-        crt.Screen.Send("exit" + "\n")
-        crt.Screen.WaitForString(showPrompt,2)
-        crt.Screen.Send("exit" + "\n")
-        crt.Screen.WaitForString(cliPrompt,2)
-        currentCli = True
-    elif check_cli() == True:
-        currentCli = True
-    else:
-        crt.Dialog.MessageBox("Getting cli prompt failed!")
-        crt.Screen.SendSpecial("MENU_SCRIPT_CANCEL")
         
     #Mount USB
     if mount_usb() == True:
@@ -140,47 +118,50 @@ def main():
         crt.Screen.WaitForString(showPrompt)
         crt.Sleep(500)
         crt.Screen.Send("configure" + "\n")
-        crt.Screen.WaitForString(configPrompt,60)
+        crt.Screen.WaitForString(configPrompt)
         crt.Sleep(500)
         crt.Screen.Send("set chassis cluster redundancy-group 0 node 0 priority 200" + "\n")
-        crt.Screen.WaitForString(configPrompt,60)
+        crt.Screen.WaitForString(configPrompt)
         crt.Sleep(500)
         crt.Screen.Send("set chassis cluster redundancy-group 0 node 1 priority 100" + "\n")
-        crt.Screen.WaitForString(configPrompt,60)
+        crt.Screen.WaitForString(configPrompt)
         crt.Sleep(500)
         crt.Screen.Send("commit and-quit" + "\n")
-        crt.Screen.WaitForString(showPrompt,120)
-        crt.Sleep(500)
+        crt.Screen.WaitForString("commit complete")
+        crt.Screen.WaitForString(showPrompt)
+        crt.Sleep(10000)
         crt.Screen.Send("request system software add /mnt/junos-srxsme-18.2R3.4.tgz no-copy reboot best-effort-load no-validate" + "\n")
         #Check the reboot completed then login
         currentCli = False
-        crt.Screen.WaitForString(loginPrompt,1800)
-        crt.Sleep(10000)
+        crt.Screen.WaitForString(loginPrompt)
+        crt.Sleep(120000)
         crt.Screen.Send ("\n")
+        crt.Screen.WaitForString(loginPrompt)
+        crt.Sleep(5000)
         crt.Screen.Send ("root" + "\n")
-        crt.Screen.WaitForString("Password: ",30)
-        crt.Sleep(1000)
+        crt.Screen.WaitForString("Password: ")
+        crt.Sleep(5000)
         crt.Screen.Send ("1234Aa@" + "\n")
-        currentCli = crt.Screen.WaitForString(cliPrompt,30)
-        crt.Sleep(1000)
-        while currentCli == False:
-            if check_cli(userName,hostName) == True:
-                currentCli = True
-            else:
-                crt.Screen.Send ("\n")
-                crt.Sleep(1000)
-                crt.Screen.Send ("\n")
-                crt.Screen.WaitForString("login: ",60)
-                crt.Sleep(1000)
-                crt.Screen.Send ("root" + "\n")
-                crt.Screen.WaitForString("Password: ",2)
-                crt.Sleep(1000)
-                crt.Screen.Send ("1234Aa@" + "\n")
-                currentCli = crt.Screen.WaitForString(cliPrompt,2)
-                crt.Sleep(1000)
+        crt.Screen.WaitForString(cliPrompt)
+        crt.Sleep(30000)
+        # while currentCli == False:
+        #     if check_cli(userName,hostName) == True:
+        #         currentCli = True
+        #     else:
+        #         crt.Screen.Send ("\n")
+        #         crt.Sleep(1000)
+        #         crt.Screen.Send ("\n")
+        #         crt.Screen.WaitForString("login: ",60)
+        #         crt.Sleep(1000)
+        #         crt.Screen.Send ("root" + "\n")
+        #         crt.Screen.WaitForString("Password: ",2)
+        #         crt.Sleep(1000)
+        #         crt.Screen.Send ("1234Aa@" + "\n")
+        #         currentCli = crt.Screen.WaitForString(cliPrompt,2)
+        #         crt.Sleep(1000)
         #Check cluster status
         crt.Screen.Send ("cli" + "\n")
-        crt.Screen.WaitForString(showPrompt,60)
+        crt.Screen.WaitForString(showPrompt)
         crt.Sleep(1000)
         clusterStatus = False
         while clusterStatus == False:
