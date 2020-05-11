@@ -408,7 +408,7 @@ def main():
             crt.Screen.Send ("configure" + "\n")
             crt.Screen.WaitForString(configPrompt,120)
             crt.Sleep(1000)
-            crt.Screen.Send ("set interface ge-0/0/3 description Internet" + "\n")
+            crt.Screen.Send ("set interface ge-0/0/8 description Internet" + "\n")
             crt.Screen.WaitForString(configPrompt,120)
             crt.Sleep(1000)
             crt.Screen.Send ("commit" + "\n")
