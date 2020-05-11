@@ -45,6 +45,7 @@ def mount_usb():
         crt.Screen.Send("ls /dev/da1s*" + "\n")
         dev = crt.Screen.ReadString(cliPrompt)
         crt.Sleep(2000)
+        crt.Sleep(3000)
         for usb in range(1,10):
             devName = "da1s" + str(usb)
             if dev.find(devName)!=-1:
