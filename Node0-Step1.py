@@ -42,9 +42,9 @@ def mount_usb():
     cliPrompt = "root@% "
     mountUsb = False
     while mountUsb == False:
+        #Test git commit
         crt.Screen.Send("ls /dev/da1s*" + "\n")
         dev = crt.Screen.ReadString(cliPrompt)
-        crt.Sleep(2000)
         crt.Sleep(3000)
         for usb in range(1,10):
             devName = "da1s" + str(usb)
