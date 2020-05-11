@@ -143,21 +143,21 @@ def get_config(userName,hostName):
 def mount_usb(userName, hostName):
     cliPrompt = userName + "@" + hostName + "% "
     mountUsb = False
-    count = 0
+    #count = 0
     while mountUsb == False:
         crt.Screen.Send("ls /dev/da1s*" + "\n")
         dev = crt.Screen.ReadString(cliPrompt,60)
         crt.Sleep(5000)
-        count += 1
+        #count += 1
         for usb in range(1,10):
             devName = "da1s" + str(usb)
             if dev.find(devName)!=-1:
                 crt.Screen.Send("mount_msdosfs /dev/"+ devName +" /mnt" + "\n")
                 mountUsb = True
                 break
-        if count >= 5:
-            mountUsb = True
-    if mountUsb == True and count < 5:
+        #if count >= 5:
+        #    mountUsb = True
+    if mountUsb == True:
         return True
     else:
         return False
@@ -211,9 +211,9 @@ def main():
     #End prompt variables
 
     #Check prompt
-    if check_cli(userName,hostName) != True or check_show(userName,hostName) != True or check_config(userName,hostName) != True:
-        crt.Dialog.MessageBox("Không thể tìm thấy Prompt! Kiểm tra lại user và hostname vừa nhập!")
-        crt.Screen.SendSpecial("MENU_SCRIPT_CANCEL")
+    # if check_cli(userName,hostName) != True or check_show(userName,hostName) != True or check_config(userName,hostName) != True:
+        # crt.Dialog.MessageBox("Không thể tìm thấy Prompt! Kiểm tra lại user và hostname vừa nhập!")
+        # crt.Screen.SendSpecial("MENU_SCRIPT_CANCEL")
     #End check prompt
 
     #Change root password
@@ -251,60 +251,63 @@ def main():
     #End prompt variables
         
     #Mount USB
-    if mount_usb() == True:
-        crt.Sleep(2000)
+    crt.Sleep(10000)
+    if mount_usb(userName, hostName) == True:
+        crt.Sleep(10000)
         crt.Screen.Send("ls /mnt/" + "\n")
         usbContent = crt.Screen.ReadString(cliPrompt)
-        crt.Sleep(5000)
-        if usbContent.find("junos-srxsme-18.2R3.4.tgz")!=-1:
-            crt.Screen.Send("mkdir /mnt/" + hostName + "\n")
-            crt.Screen.WaitForString(cliPrompt)
-            crt.Sleep(2000)
-            crt.Screen.Send("cp /config/*.gz /mnt/" + hostName + "/" + "\n")
-            crt.Screen.WaitForString(cliPrompt,20)
-            crt.Sleep(2000)
-            crt.Screen.Send("ls /mnt/" + hostName + "/" + "\n")
-            crt.Screen.WaitForString(cliPrompt)
-            backupContent = crt.Screen.ReadString(cliPrompt,60)
-            if backupContent.find("juniper.conf.gz") != -1:
-                crt.Screen.Send("cli" + "\n")
-                crt.Screen.WaitForString(showPrompt)
-                #Log configure to computer
-                crt.Screen.Send ("file show /config/juniper.conf.gz | no-more" + "\n")
-                configRead = crt.Screen.ReadString(showPrompt)
-                crt.Sleep(1000)
-                configFile = hostName + ".conf"
-                fo = open(configFile ,"w+")
-                fo.write(configRead)
-                fo.close()
-                crt.Sleep(1000)
-                configFileTxt = hostName + ".export.txt"
-                fo = open(configFile ,"r")
-                fotxt = open(configFileTxt ,"w+")
-                lines = fo.readlines()
-                linecount = 0
-                for line in lines:
-                    if linecount >= 3:
-                        fotxt.writelines(line)
-                    linecount += 1
-                crt.Sleep(2000)
-                fotxt.close()
-                fo.close()
-                #End logging configure
-                crt.Screen.Send("request system software add /mnt/junos-srxsme-18.2R3.4.tgz no-copy best-effort-load no-validate" + "\n")
-                crt.Screen.WaitForString(showPrompt,3600)
-                crt.Screen.Send("exit" + "\n")
-                crt.Screen.WaitForString(cliPrompt,20)
-                crt.Sleep(2000)
-                crt.Screen.Send("umount /mnt" + "\n")
-                crt.Sleep(3000)
-                crt.Dialog.MessageBox("Hoàn thành cấu hình node 1"")
-            else:
-                crt.Dialog.MessageBox("Lỗi backup cấu hình ra USB")
-                crt.Screen.SendSpecial("MENU_SCRIPT_CANCEL")
-        else:
-            crt.Dialog.MessageBox("USB không chưa file Junos")
-            crt.Screen.SendSpecial("MENU_SCRIPT_CANCEL")
+        crt.Sleep(10000)
+        #if usbContent.find("junos-srxsme-18.2R3.4.tgz")!=-1:
+        crt.Screen.Send("mkdir /mnt/" + hostName + "\n")
+        crt.Screen.WaitForString(cliPrompt)
+        crt.Sleep(2000)
+        crt.Screen.Send("cp /config/*.gz /mnt/" + hostName + "/" + "\n")
+        crt.Screen.WaitForString(cliPrompt,20)
+        crt.Sleep(2000)
+        crt.Screen.Send("ls /mnt/" + hostName + "/" + "\n")
+        crt.Screen.WaitForString(cliPrompt)
+        backupContent = crt.Screen.ReadString(cliPrompt,60)
+        #if backupContent.find("juniper.conf.gz") != -1:
+        crt.Screen.Send("cli" + "\n")
+        crt.Screen.WaitForString(showPrompt)
+        #Log configure to computer
+        crt.Screen.Send ("file show /config/juniper.conf.gz | no-more" + "\n")
+        configRead = crt.Screen.ReadString(showPrompt)
+        crt.Sleep(1000)
+        configFile = hostName + ".conf"
+        fo = open(configFile ,"w+")
+        fo.write(configRead)
+        fo.close()
+        crt.Sleep(1000)
+        configFileTxt = hostName + ".export.txt"
+        fo = open(configFile ,"r")
+        fotxt = open(configFileTxt ,"w+")
+        lines = fo.readlines()
+        linecount = 0
+        for line in lines:
+            if linecount >= 3:
+                fotxt.writelines(line)
+            linecount += 1
+        crt.Sleep(2000)
+        fotxt.close()
+        fo.close()
+        #End logging configure
+        crt.Screen.Send("request system software add /mnt/junos-srxsme-18.2R3.4.tgz no-copy best-effort-load no-validate" + "\n")
+        #Problem here
+        crt.Screen.WaitForString(showPrompt,3600)
+        crt.Sleep(150000)
+        crt.Screen.Send("exit" + "\n")
+        crt.Screen.WaitForString(cliPrompt,20)
+        crt.Sleep(2000)
+        crt.Screen.Send("umount /mnt" + "\n")
+        crt.Sleep(3000)
+        crt.Dialog.MessageBox("Hoàn thành cấu hình node 1")
+        #else:
+        #    crt.Dialog.MessageBox("Lỗi backup cấu hình ra USB")
+        #    crt.Screen.SendSpecial("MENU_SCRIPT_CANCEL")
+        #else:
+        #    crt.Dialog.MessageBox("USB không chưa file Junos")
+        #    crt.Screen.SendSpecial("MENU_SCRIPT_CANCEL")
     else:
         crt.Dialog.MessageBox("Lỗi mount USB")
         crt.Screen.SendSpecial("MENU_SCRIPT_CANCEL")
