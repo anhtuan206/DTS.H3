@@ -1,0 +1,18 @@
+With the Completed page of the setup wizard still open, use Windows to navigate to the Cloudbase-Init installation path, and open the following file in a text editor.
+conf\cloudbase-init-unattend.conf
+
+Set metadata_services to OvfService as shown.
+metadata_services=cloudbaseinit.metadata.services.ovfservice.OvfService
+
+Save and close cloudbase-init-unattend.conf.
+In the same folder, open the following file in a text editor.
+conf\cloudbase-init.conf
+
+Set first_logon_behaviour, metadata_services, and plugins as shown.
+
+first_logon_behaviour=always
+. . .
+metadata_services=cloudbaseinit.metadata.services.ovfservice.OvfService
+. . . 
+plugins=cloudbaseinit.plugins.windows.createuser.CreateUserPlugin,cloudbaseinit.plugins.windows.setuserpassword.SetUserPasswordPlugin,cloudbaseinit.plugins.common.sshpublickeys.SetUserSSHPublicKeysPlugin,cloudbaseinit.plugins.common.userdata.UserDataPlugin
+. . .
